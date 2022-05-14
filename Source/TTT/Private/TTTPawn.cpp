@@ -8,13 +8,13 @@
 ATTTPawn::ATTTPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	Camera->SetupAttachment(Root);
-	Camera->SetRelativeTransform(FTransform(FRotator(180.f, -90.f, 180.f),FVector(0.f, 0.f, 1000.f),FVector(1.f, 1.f, 1.f)));
-
+	Camera->SetRelativeTransform(FTransform(FRotator(-90.f, 0.f, 0.f),FVector(0.f, 0.f, 1000.f),FVector(1.f, 1.f, 1.f)));
+	
 }
 
 // Called when the game starts or when spawned

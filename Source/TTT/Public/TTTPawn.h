@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Camera/CameraComponent.h"
+#include "TTT_HUD_UI.h"
+#include "TTTSystem.h"
 #include "TTTPawn.generated.h"
 
 UCLASS()
@@ -28,10 +30,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USceneComponent* Root = nullptr;
+	USceneComponent* Root;
+	UCameraComponent* Camera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UCameraComponent* Camera = nullptr;
+	UTTT_HUD_UI* HUD_UI;
+	ATTTSystem* TTTSystem;
+
+	bool IsGameActive = false;
+	bool IsCurrentlyOPlayer = false;
+
 
 };
