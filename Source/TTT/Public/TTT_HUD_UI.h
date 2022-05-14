@@ -16,12 +16,16 @@ class UTTT_HUD_UI : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable)
-	void SwitchIsPlaying(bool bIsPlaying, bool bIsOPlayer);
+	UFUNCTION(BlueprintImplementableEvent)
+	void NewSwitchIsPlaying(bool bIsPlaying, bool bIsOPlayer);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintImplementableEvent)
 	void EndGame(ETileState State);
 
-	UFUNCTION(BlueprintCallable)
-	void UpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
+	UFUNCTION(BlueprintImplementableEvent)
+	void NewUpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
+
+public:
+	DECLARE_DELEGATE_OneParam( NewOnGridAdjust, bool );
+	DECLARE_DELEGATE( NewOnGameStartStop );
 };

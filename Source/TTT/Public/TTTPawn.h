@@ -36,11 +36,18 @@ public:
 	UTTT_HUD_UI* HUD_UI;
 	ATTTSystem* TTTSystem;
 
+	APlayerController* PlayerController;
+
 	bool IsGameActive = false;
 	bool IsCurrentlyOPlayer = false;
 
 public:
+	UFUNCTION(BlueprintCallable)
 	void InitUI();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	UTTT_HUD_UI* InitUI_BP();
+
 	void InitSystem();
 	void UpdateCamera(int32 GridDimensions, float DistanceMultiplier);
 
@@ -48,5 +55,5 @@ public:
 	void InputActionSelect();
 	void GridAdjust(bool IsIncrementing);
 
-	FIndexSuccessInfo ClickTraceForTile();
+	bool ClickTraceForTile(int32& OutIndex);
 };

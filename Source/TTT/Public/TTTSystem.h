@@ -29,6 +29,7 @@ enum ETileDirection
 	UpLeft UMETA(DisplayName = "UpLeft"),
 };
 
+/*
 USTRUCT()
 struct FIndexSuccessInfo
 {
@@ -36,6 +37,7 @@ struct FIndexSuccessInfo
 	int32 OutIndex;
 	bool bIsInRange;
 };
+*/
 
 UCLASS()
 class ATTTSystem : public AActor
@@ -76,7 +78,8 @@ public:
 
 public:
 	ETileState CheckWinner(int32 StartFromIndex);
-	FIndexSuccessInfo GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction) const;
+	//FIndexSuccessInfo GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction) const;
+	bool GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction, int32* OutIndex);
 	TArray<int32> GetCoordAdderFromDirection(ETileDirection Direction) const;
 	int32 GetMainArraysLastIndex(int32 GridDimensions) const;
 	int32 GetMainArraysLength(int32 GridDimensions) const;
