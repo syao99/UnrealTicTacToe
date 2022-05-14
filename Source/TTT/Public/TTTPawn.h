@@ -39,5 +39,14 @@ public:
 	bool IsGameActive = false;
 	bool IsCurrentlyOPlayer = false;
 
+public:
+	void InitUI();
+	void InitSystem();
+	void UpdateCamera(int32 GridDimensions, float DistanceMultiplier);
 
+	void GameStartStop();
+	void InputActionSelect();
+	void GridAdjust(bool IsIncrementing);
+
+	FIndexSuccessInfo ClickTraceForTile();
 };

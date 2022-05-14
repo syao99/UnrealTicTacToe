@@ -30,7 +30,7 @@ enum ETileDirection
 };
 
 USTRUCT()
-struct FAdjacentTileInfo
+struct FIndexSuccessInfo
 {
 	GENERATED_BODY()
 	int32 OutIndex;
@@ -76,7 +76,7 @@ public:
 
 public:
 	ETileState CheckWinner(int32 StartFromIndex);
-	FAdjacentTileInfo GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction) const;
+	FIndexSuccessInfo GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction) const;
 	TArray<int32> GetCoordAdderFromDirection(ETileDirection Direction) const;
 	int32 GetMainArraysLastIndex(int32 GridDimensions) const;
 	int32 GetMainArraysLength(int32 GridDimensions) const;
