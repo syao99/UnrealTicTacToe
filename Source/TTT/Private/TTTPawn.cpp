@@ -3,6 +3,7 @@
 
 #include "TTTPawn.h"
 #include "TTTSystem.h"
+#include "TTT_HUD_UI.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -25,23 +26,30 @@ void ATTTPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	//InitUI();
-	//InitSystem();
-	//UpdateCamera(3, 269.f);
+	InitUI();
+	InitSystem();
+	UpdateCamera(3, GridDistanceMultiplier);
 }
 
 // Called every frame
 void ATTTPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
 void ATTTPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	//Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (InputComponent)
+	{
+		InputComponent->BindAction(
+			"Select",
+			IE_Pressed,
+			this,
+			&ATTTPawn::InputActionSelect
+		);
+	}
 }
 
 void ATTTPawn::InitUI()
@@ -51,8 +59,9 @@ void ATTTPawn::InitUI()
 	if (HUD_UI != nullptr) { HUD_UI->AddToViewport(); }
 	PlayerController->SetShowMouseCursor(true);
 	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, HUD_UI, EMouseLockMode::DoNotLock, false);
-	//HUD_UI->NewOnGridAdjust.BindRaw();
-	// todo: figure out dumbfuck docs & delegates
+	HUD_UI->NewOnGridAdjust.AddDynamic(this, &ATTTPawn::GridAdjust);
+	HUD_UI->NewOnGameStartStop.AddDynamic(this, &ATTTPawn::GameStartStop);
+	
 }
 
 void ATTTPawn::InitSystem()
@@ -75,7 +84,7 @@ void ATTTPawn::GameStartStop()
 	TTTSystem->StartStopGame(bIsGameActive);
 	bIsCurrentlyOPlayer = false;
 }
-/*
+
 void ATTTPawn::InputActionSelect()
 {
 	if (bIsGameActive)
@@ -85,24 +94,41 @@ void ATTTPawn::InputActionSelect()
 		{
 			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
 			{
-				//auto State = TTTSystem->CheckWinner(TraceIndex);
-				/*switch (State)
+				ETileState State = TTTSystem->CheckWinner(TraceIndex);
+				switch (State)
 				{
 					case ETileState::Neutral:
+						if (TTTSystem->IsGameTied()) {
+							EndGame(State);
+						}
+						else
+						{
+							bIsCurrentlyOPlayer = !bIsCurrentlyOPlayer;
+							HUD_UI->NewUpdateStatusTextCurrentPlayer(bIsCurrentlyOPlayer, true);
+						}
 					break;
 					case ETileState::X:
+						EndGame(State);
 					break;
 					case ETileState::O:
+						EndGame(State);
 					break;
 				}
 			}
 		}
 	}
 }
-*/
-void ATTTPawn::GridAdjust(bool IsIncrementing)
-{
 
+void ATTTPawn::EndGame(ETileState State)
+{
+	HUD_UI->EndGame(State);
+	bIsGameActive = false;
+}
+
+void ATTTPawn::GridAdjust(bool bIsIncrementing)
+{
+	int32 GridDim = TTTSystem->AdjustGrid(bIsIncrementing);
+	UpdateCamera(GridDim, GridDistanceMultiplier);
 }
 
 bool ATTTPawn::ClickTraceForTile(int32& OutIndex)

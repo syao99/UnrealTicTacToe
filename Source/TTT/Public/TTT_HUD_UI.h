@@ -26,6 +26,14 @@ public:
 	void NewUpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
 
 public:
-	DECLARE_DELEGATE_OneParam( NewOnGridAdjust, bool );
-	DECLARE_DELEGATE( NewOnGameStartStop );
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FNewOnGridAdjustSignature, bool, bIsIncrementing );
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE( FNewOnGameStartStopSignature );
+
+	UPROPERTY(BlueprintAssignable)
+	FNewOnGridAdjustSignature NewOnGridAdjust;
+
+	UPROPERTY(BlueprintAssignable)
+	FNewOnGameStartStopSignature NewOnGameStartStop;
+
+	//NewOnGridAdjust.AddDynamic(this,);
 };

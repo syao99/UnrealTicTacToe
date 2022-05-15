@@ -41,6 +41,8 @@ public:
 	bool bIsGameActive = false;
 	bool bIsCurrentlyOPlayer = false;
 
+	const float GridDistanceMultiplier = 269.f;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void InitUI();
@@ -53,7 +55,8 @@ public:
 
 	void GameStartStop();
 	void InputActionSelect();
-	void GridAdjust(bool IsIncrementing);
+	void EndGame(ETileState State);
+	void GridAdjust(bool bIsIncrementing);
 
 	bool ClickTraceForTile(int32& OutIndex);
 };

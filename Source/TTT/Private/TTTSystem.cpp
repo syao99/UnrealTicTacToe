@@ -18,7 +18,7 @@ ATTTSystem::ATTTSystem()
 void ATTTSystem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	UpdateGrid();
 }
 
 // Called every frame
@@ -36,7 +36,7 @@ void ATTTSystem::UpdateGrid()
 	Grid->ClearInstances();
 	float GridOffsetVal = GetGridOffsetCenteringVal(GridDimensions, GridGap);
 	int32 LastIndex = GetMainArraysLastIndex(GridDimensions);
-	for (int i = 0; i < LastIndex; i++) {
+	for (int32 i = 0; i < LastIndex; i++) {
 		TArray<int32> GridCoords = GetGridCoordsFromIndex(i, GridDimensions);
 		float LocationX = (GridCoords[0] * GridGap) - GridOffsetVal;
 		float LocationY = (GridCoords[1] * GridGap) - GridOffsetVal;
@@ -80,73 +80,189 @@ bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 }
 void ATTTSystem::ResetPieces()
 {
-
+	for (int32 i = 0; i < Meshes.Num(); i++) {
+		if (Meshes[i])
+		{
+			if (IsValid(Meshes[i])) {
+				Meshes[i]->Destroy();
+				Meshes[i] = nullptr;
+			}
+		}
+	}
+	PieceCount = 0;
+	for (int32 i = 0; i < TileState.Num(); i++) {
+		TileState[i] = ETileState::Neutral;
+	}
 }
 void ATTTSystem::StartStopGame(bool IsStarting)
 {
-	return;
+	ResetPieces();
 }
 
 ETileState ATTTSystem::CheckWinner(int32 StartFromIndex)
 {
+	if (PieceCount >= GridDimensions) {
+		ETileState CompareTileState = TileState[StartFromIndex];
+		bool bIsWinner = false;
+		bIsWinner = (
+			ScanDiagonal(CompareTileState, GridDimensions, false) ||
+			ScanDiagonal(CompareTileState, GridDimensions, true) ||
+			ScanRowOrColumn(CompareTileState, GridDimensions, false) ||
+			ScanRowOrColumn(CompareTileState, GridDimensions, true)
+		);
+		if (bIsWinner)
+		{
+			return CompareTileState;
+		}
+	}
 	return ETileState::Neutral;
 }
 
-bool ATTTSystem::GetAdjacentTile(int32 Index, int32 GridDim, ETileDirection Direction, int32* OutIndex)
+bool ATTTSystem::GetAdjacentTile(int32 Index, const int32 GridDim, ETileDirection Direction, int32& OutIndex)
 {
+	TArray<int32> GridCoords = GetGridCoordsFromIndex(Index, GridDim);
+	TArray<int32> GridCoordAdder = GetCoordAdderFromDirection(Direction);
+	GridCoords[0] += GridCoordAdder[0];
+	GridCoords[1] += GridCoordAdder[1];
+	OutIndex = GetIndexFromGridCoords(GridCoords[0], GridCoords[1], GridDim);
+	bool bIsInRange = (
+		UKismetMathLibrary::InRange_IntInt(GridCoords[0], 0, GridDim - 1, true, true) &&
+		UKismetMathLibrary::InRange_IntInt(GridCoords[1], 0, GridDim - 1, true, true)
+	);
+	return bIsInRange;
+}
+
+TArray<int32> ATTTSystem::GetCoordAdderFromDirection(ETileDirection Direction) const
+{
+	TArray<int32> Coords;
+	Coords.SetNum(2);
+	switch (Direction)
+	{
+	case ETileDirection::Up:
+		Coords[0] = 1;
+		Coords[1] = 0;
+	break;
+	case ETileDirection::UpRight:
+		Coords[0] = 1;
+		Coords[1] = 1;
+	break;
+	case ETileDirection::Right:
+		Coords[0] = 0;
+		Coords[1] = 1;
+	break;
+	case ETileDirection::DownRight:
+		Coords[0] = -1;
+		Coords[1] = 1;
+	break;
+	case ETileDirection::Down:
+		Coords[0] = -1;
+		Coords[1] = 0;
+	break;
+	case ETileDirection::DownLeft:
+		Coords[0] = -1;
+		Coords[1] = -1;
+	break;
+	case ETileDirection::Left:
+		Coords[0] = 0;
+		Coords[1] = -1;
+	break;
+	case ETileDirection::UpLeft:
+		Coords[0] = 1;
+		Coords[1] = -1;
+	break;
+	}
+	return Coords;
+}
+
+int32 ATTTSystem::GetMainArraysLastIndex(int32 GridDim) const
+{
+	return (GridDim ^ 2) - 1;
+}
+
+int32 ATTTSystem::GetMainArraysLength(int32 GridDim) const
+{
+	return GridDim ^ 2;
+}
+
+bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, const int32 GridDim, bool bIsRows) const
+{
+	int32 LastIndex = GridDim - 1;
+	int32 CurrentCount = 0;
+	for (int32 i = 0; i < LastIndex; i++)
+	{
+		CurrentCount = 0;
+		for (int32 j = 0; j < LastIndex; j++)
+		{
+			int32 X, Y;
+			bIsRows ? X = i : X = j;
+			bIsRows ? Y = j : Y = i;
+			bool bIsMatchingTileState =
+				TileState[GetIndexFromGridCoords(X, Y, GridDim)] == CompareTileState;
+			if (bIsMatchingTileState)
+			{
+				CurrentCount++;
+				if (CurrentCount >= GridDim)
+				{
+					return true;
+				}
+			}
+		}
+	}
 	return false;
 }
 
-TArray<int32> ATTTSystem::GetCoordAdderFromDirection(ETileDirection Direction)
+bool ATTTSystem::ScanDiagonal(ETileState CompareTileState, const int32 GridDim, bool bIsReversed) const
 {
-	TArray<int32> Arr;
-	return Arr;
-}
+	int32 LastIndex = GridDim - 1;
+	int32 CurrentCount = 0;
+	for (int32 i = 0; i < LastIndex; i++)
+	{
+		int32 X, Y;
+		X = i;
+		bIsReversed ? Y = LastIndex - i : Y = i;
+		bool bIsMatchingTileState =
+			TileState[GetIndexFromGridCoords(X, Y, GridDim)] == CompareTileState;
+		if (bIsMatchingTileState)
+		{
+			CurrentCount++;
+			if (CurrentCount >= GridDim)
+			{
+				return true;
+			}
+		}
 
-int32 ATTTSystem::GetMainArraysLastIndex(int32 GridDim)
-{
-	return 0;
-}
-
-int32 ATTTSystem::GetMainArraysLength(int32 GridDim)
-{
-	return 0;
-}
-
-bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, int32 GridDim, bool bIsRows)
-{
+	}
 	return false;
 }
 
-bool ATTTSystem::ScanDiagonal(ETileState CompareTileState, int32 GridDim, bool bIsReversed)
+bool ATTTSystem::IsGameTied() const
 {
-	return false;
-}
-
-bool ATTTSystem::IsGameTied()
-{
-	return false;
+	return PieceCount >= GetMainArraysLength(GridDimensions);
 }
 
 
-TArray<int32> ATTTSystem::GetGridCoordsFromIndex(int32 Index, int32 GridDim)
+TArray<int32> ATTTSystem::GetGridCoordsFromIndex(int32 Index, const int32 GridDim) const
 {
-	TArray<int32> Arr;
-	return Arr;
+	TArray<int32> Coords;
+	Coords.SetNum(2);
+	Coords[0] = Index % GridDim;
+	Coords[1] = Index / GridDim;
+	return Coords;
 }
 
-int32 ATTTSystem::GetIndexFromGridCoords(int32 X, int32 Y, int32 GridDim)
+int32 ATTTSystem::GetIndexFromGridCoords(int32 X, int32 Y, const int32 GridDim) const
 {
-	return 0;
+	return X + (Y * GridDim);
 }
 
 
-float ATTTSystem::GetGridOffsetCenteringVal(int32 GridDim, float GGap)
+float ATTTSystem::GetGridOffsetCenteringVal(const int32 GridDim, float GGap) const
 {
-	return 0.f;
+	return ((GridDim - 1) * GGap) / 2;
 }
 
-ETileState ATTTSystem::GetTileStateFromIsO(bool IsO)
+ETileState ATTTSystem::GetTileStateFromIsO(bool bIsO) const
 {
-	return ETileState::Neutral;
+	if (bIsO) { return ETileState::O; }
+	return ETileState::X;
 }

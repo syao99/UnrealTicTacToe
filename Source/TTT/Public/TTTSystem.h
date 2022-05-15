@@ -78,19 +78,19 @@ public:
 
 public:
 	ETileState CheckWinner(int32 StartFromIndex);
-	//FIndexSuccessInfo GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction);
-	bool GetAdjacentTile(int32 Index, int32 GridDim, ETileDirection Direction, int32* OutIndex);
-	TArray<int32> GetCoordAdderFromDirection(ETileDirection Direction);
-	int32 GetMainArraysLastIndex(int32 GridDim);
-	int32 GetMainArraysLength(int32 GridDim);
-	bool ScanRowOrColumn(ETileState CompareTileState, int32 GridDim, bool bIsRows);
-	bool ScanDiagonal(ETileState CompareTileState, int32 GridDim, bool bIsReversed);
-	bool IsGameTied();
 
-	TArray<int32> GetGridCoordsFromIndex(int32 Index, int32 GridDim);
-	int32 GetIndexFromGridCoords(int32 X, int32 Y, int32 GridDim);
+	bool GetAdjacentTile(int32 Index, const int32 GridDim, ETileDirection Direction, int32& OutIndex);
+	TArray<int32> GetCoordAdderFromDirection(ETileDirection Direction) const;
+	int32 GetMainArraysLastIndex(int32 GridDim) const;
+	int32 GetMainArraysLength(int32 GridDim) const;
+	bool ScanRowOrColumn(ETileState CompareTileState, const int32 GridDim, bool bIsRows) const;
+	bool ScanDiagonal(ETileState CompareTileState, const int32 GridDim, bool bIsReversed) const;
+	bool IsGameTied() const;
 
-	float GetGridOffsetCenteringVal(int32 GridDim, float GGap);
-	ETileState GetTileStateFromIsO(bool IsO);
+	TArray<int32> GetGridCoordsFromIndex(int32 Index, const int32 GridDim) const;
+	int32 GetIndexFromGridCoords(int32 X, int32 Y, const int32 GridDim) const;
+
+	float GetGridOffsetCenteringVal(const int32 GridDim, const float GGap) const;
+	ETileState GetTileStateFromIsO(bool bIsO) const;
 
 };
