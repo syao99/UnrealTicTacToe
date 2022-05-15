@@ -34,6 +34,4 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FNewOnGameStartStopSignature NewOnGameStartStop;
-
-	//NewOnGridAdjust.AddDynamic(this,);
 };

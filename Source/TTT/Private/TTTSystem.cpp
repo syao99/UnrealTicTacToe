@@ -11,13 +11,13 @@ ATTTSystem::ATTTSystem()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Grid = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("InstancedStaticMeshComponent"));
-
 }
 
 // Called when the game starts or when spawned
 void ATTTSystem::BeginPlay()
 {
 	Super::BeginPlay();
+	Grid->SetStaticMesh(MeshGrid);
 	UpdateGrid();
 }
 
@@ -35,7 +35,7 @@ void ATTTSystem::UpdateGrid()
 	TileState.Reset();
 	Grid->ClearInstances();
 	float GridOffsetVal = GetGridOffsetCenteringVal(GridDimensions, GridGap);
-	int32 LastIndex = GetMainArraysLastIndex(GridDimensions);
+	int32 LastIndex = GetMainArraysLength(GridDimensions);
 	for (int32 i = 0; i < LastIndex; i++) {
 		TArray<int32> GridCoords = GetGridCoordsFromIndex(i, GridDimensions);
 		float LocationX = (GridCoords[0] * GridGap) - GridOffsetVal;
@@ -46,6 +46,7 @@ void ATTTSystem::UpdateGrid()
 			FVector(1.f, 1.f, 1.f)
 		);
 		CurrentInstances.Add(NewInst);
+		//Grid->AddInstance(NewInst);
 	}
 	Grid->AddInstances(CurrentInstances,false);
 	Meshes.SetNum(LastIndex);
@@ -176,12 +177,12 @@ TArray<int32> ATTTSystem::GetCoordAdderFromDirection(ETileDirection Direction) c
 
 int32 ATTTSystem::GetMainArraysLastIndex(int32 GridDim) const
 {
-	return (GridDim ^ 2) - 1;
+	return ((GridDim * GridDim) - 1);
 }
 
 int32 ATTTSystem::GetMainArraysLength(int32 GridDim) const
 {
-	return GridDim ^ 2;
+	return GridDim * GridDim;
 }
 
 bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, const int32 GridDim, bool bIsRows) const

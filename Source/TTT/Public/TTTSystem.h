@@ -59,7 +59,14 @@ public:
 public:
 	UInstancedStaticMeshComponent* Grid;
 	TArray<AStaticMeshActor*> Meshes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* MeshGrid;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* MeshO;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* MeshX;
 
 	TArray<FTransform> CurrentInstances;

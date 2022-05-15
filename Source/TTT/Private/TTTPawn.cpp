@@ -18,7 +18,6 @@ ATTTPawn::ATTTPawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	Camera->SetupAttachment(Root);
 	Camera->SetRelativeTransform(FTransform(FRotator(-90.f, 0.f, 0.f),FVector(0.f, 0.f, 1000.f),FVector(1.f, 1.f, 1.f)));
-	
 }
 
 // Called when the game starts or when spawned
