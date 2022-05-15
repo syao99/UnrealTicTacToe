@@ -6,6 +6,7 @@
 void UTTT_HUD_UI::CallOnGridAdjust(bool bIsIncrementing)
 {
 	OnGridAdjust.Broadcast(bIsIncrementing);
+	//UE_LOG(LogTemp, Display, TEXT("OnGridAdjust %s"), bIsIncrementing ? TEXT("True") : TEXT("False"));
 }
 
 void UTTT_HUD_UI::CallOnGameStartStop()

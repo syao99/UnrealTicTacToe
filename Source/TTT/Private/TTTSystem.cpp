@@ -46,7 +46,6 @@ void ATTTSystem::UpdateGrid()
 			FVector(1.f, 1.f, 1.f)
 		);
 		CurrentInstances.Add(NewInst);
-		//Grid->AddInstance(NewInst);
 	}
 	Grid->AddInstances(CurrentInstances,false);
 	Meshes.SetNum(LastIndex);
@@ -54,9 +53,12 @@ void ATTTSystem::UpdateGrid()
 }
 int32 ATTTSystem::AdjustGrid(bool bIsIncrementing)
 {
-	int32 Adder = 0;
-	bIsIncrementing ? Adder = 1 : Adder = -1;
-	GridDimensions += UKismetMathLibrary::Clamp(Adder, 3, 10);
+	int32 Adder = bIsIncrementing ? 1 : -1;
+	GridDimensions = FMath::Clamp(
+		GridDimensions + Adder,
+		3,
+		10
+	);
 	UpdateGrid();
 	return GridDimensions;
 }
@@ -73,7 +75,14 @@ bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 	);
 	CurrentMesh->SetMobility(EComponentMobility::Movable);
 	UStaticMesh* PlayerMesh;
-	bIsOPlayer ? PlayerMesh = MeshO : PlayerMesh = MeshX;
+	if (bIsOPlayer)
+	{
+		PlayerMesh = MeshO;
+	}
+	else
+	{
+		PlayerMesh = MeshX;
+	}
 	CurrentMesh->GetStaticMeshComponent()->SetStaticMesh(PlayerMesh);
 	Meshes[LocationIndex] = CurrentMesh;
 	PieceCount++;
@@ -195,8 +204,17 @@ bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, const int32 GridDi
 		for (int32 j = 0; j < LastIndex; j++)
 		{
 			int32 X, Y;
-			bIsRows ? X = i : X = j;
-			bIsRows ? Y = j : Y = i;
+			if (bIsRows)
+			{
+				X = i;
+				Y = j;
+			}
+			else
+			{
+				X = j;
+				Y = i;
+			}
+			
 			bool bIsMatchingTileState =
 				TileState[GetIndexFromGridCoords(X, Y, GridDim)] == CompareTileState;
 			if (bIsMatchingTileState)
@@ -220,7 +238,14 @@ bool ATTTSystem::ScanDiagonal(ETileState CompareTileState, const int32 GridDim, 
 	{
 		int32 X, Y;
 		X = i;
-		bIsReversed ? Y = LastIndex - i : Y = i;
+		if (bIsReversed)
+		{
+			Y = LastIndex - i;
+		}
+		else
+		{
+			Y = i;
+		}
 		bool bIsMatchingTileState =
 			TileState[GetIndexFromGridCoords(X, Y, GridDim)] == CompareTileState;
 		if (bIsMatchingTileState)

@@ -54,6 +54,11 @@ void ATTTPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATTTPawn::InitUI()
 {
 	HUD_UI = InitUI_BP();
+	if (HUD_UI == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Error: TTTPawn must be instantiated as BP, with InitUI_BP() implemented and returning a valid UI pointer."));
+		return;
+	}
 	//HUD_UI = CreateWidget<UTTT_HUD_UI>(GetWorld(), UTTT_HUD_UI::StaticClass());
 	if (HUD_UI != nullptr) { HUD_UI->AddToViewport(); }
 	PlayerController->SetShowMouseCursor(true);
@@ -78,6 +83,7 @@ void ATTTPawn::UpdateCamera(int32 GridDimensions, float DistanceMultiplier)
 
 void ATTTPawn::GameStartStop()
 {
+	UE_LOG(LogTemp, Display, TEXT("GameStartStop"));
 	bIsGameActive = !bIsGameActive;
 	HUD_UI->NewSwitchIsPlaying(bIsGameActive, bIsCurrentlyOPlayer);
 	TTTSystem->StartStopGame(bIsGameActive);
@@ -86,6 +92,7 @@ void ATTTPawn::GameStartStop()
 
 void ATTTPawn::InputActionSelect()
 {
+	UE_LOG(LogTemp, Display, TEXT("Click"));
 	if (bIsGameActive)
 	{
 		int32 TraceIndex = -1;
@@ -126,6 +133,7 @@ void ATTTPawn::EndGame(ETileState State)
 
 void ATTTPawn::GridAdjust(bool bIsIncrementing)
 {
+	//UE_LOG(LogTemp, Display, TEXT("Pawn GridAdjust %s"), bIsIncrementing ? TEXT("True") : TEXT("False"));
 	int32 GridDim = TTTSystem->AdjustGrid(bIsIncrementing);
 	UpdateCamera(GridDim, GridDistanceMultiplier);
 }

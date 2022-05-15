@@ -10,8 +10,8 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewOnGridAdjustSignature, bool, bIsIncrementing);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNewOnGameStartStopSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGridAdjustSignature, bool, bIsIncrementing);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameStartStopSignature);
 
 UCLASS()
 class UTTT_HUD_UI : public UUserWidget
@@ -30,10 +30,10 @@ public:
 
 public:
 	UPROPERTY(BlueprintAssignable)
-	FNewOnGridAdjustSignature OnGridAdjust;
+	FOnGridAdjustSignature OnGridAdjust;
 
 	UPROPERTY(BlueprintAssignable)
-	FNewOnGameStartStopSignature OnGameStartStop;
+	FOnGameStartStopSignature OnGameStartStop;
 
 	UFUNCTION(BlueprintCallable)
 	void CallOnGridAdjust(bool bIsIncrementing);

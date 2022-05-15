@@ -53,10 +53,17 @@ public:
 	void InitSystem();
 	void UpdateCamera(int32 GridDimensions, float DistanceMultiplier);
 
+	UFUNCTION()
 	void GameStartStop();
+	
+	UFUNCTION()
 	void InputActionSelect();
+	
 	void EndGame(ETileState State);
-	void GridAdjust(bool bIsIncrementing);
 
+	UFUNCTION()
+	void GridAdjust(bool bIsIncrementing);
+	
+	UFUNCTION()
 	bool ClickTraceForTile(int32& OutIndex);
 };
