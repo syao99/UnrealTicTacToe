@@ -58,8 +58,8 @@ void ATTTPawn::InitUI()
 	if (HUD_UI != nullptr) { HUD_UI->AddToViewport(); }
 	PlayerController->SetShowMouseCursor(true);
 	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, HUD_UI, EMouseLockMode::DoNotLock, false);
-	HUD_UI->NewOnGridAdjust.AddDynamic(this, &ATTTPawn::GridAdjust);
-	HUD_UI->NewOnGameStartStop.AddDynamic(this, &ATTTPawn::GameStartStop);
+	HUD_UI->OnGridAdjust.AddDynamic(this, &ATTTPawn::GridAdjust);
+	HUD_UI->OnGameStartStop.AddDynamic(this, &ATTTPawn::GameStartStop);
 	
 }
 

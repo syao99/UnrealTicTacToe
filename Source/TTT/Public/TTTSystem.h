@@ -8,7 +8,7 @@
 #include "TTTSystem.generated.h"
 
 
-UENUM()
+UENUM(BlueprintType)
 enum ETileState
 {
 	Neutral UMETA(DisplayName = "Neutral"),
@@ -16,7 +16,7 @@ enum ETileState
 	O UMETA(DisplayName = "O"),
 };
 
-UENUM()
+UENUM(BlueprintType)
 enum ETileDirection
 {
 	Up UMETA(DisplayName = "Up"),
@@ -28,16 +28,6 @@ enum ETileDirection
 	Left UMETA(DisplayName = "Left"),
 	UpLeft UMETA(DisplayName = "UpLeft"),
 };
-
-/*
-USTRUCT()
-struct FIndexSuccessInfo
-{
-	GENERATED_BODY()
-	int32 OutIndex;
-	bool bIsInRange;
-};
-*/
 
 UCLASS()
 class ATTTSystem : public AActor

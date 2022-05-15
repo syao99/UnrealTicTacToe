@@ -10,28 +10,34 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FNewOnGridAdjustSignature, bool, bIsIncrementing);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNewOnGameStartStopSignature);
+
 UCLASS()
 class UTTT_HUD_UI : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void NewSwitchIsPlaying(bool bIsPlaying, bool bIsOPlayer);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void EndGame(ETileState State);
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void NewUpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FNewOnGridAdjustSignature, bool, bIsIncrementing );
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE( FNewOnGameStartStopSignature );
+	UPROPERTY(BlueprintAssignable)
+	FNewOnGridAdjustSignature OnGridAdjust;
 
 	UPROPERTY(BlueprintAssignable)
-	FNewOnGridAdjustSignature NewOnGridAdjust;
+	FNewOnGameStartStopSignature OnGameStartStop;
 
-	UPROPERTY(BlueprintAssignable)
-	FNewOnGameStartStopSignature NewOnGameStartStop;
+	UFUNCTION(BlueprintCallable)
+	void CallOnGridAdjust(bool bIsIncrementing);
+
+	UFUNCTION(BlueprintCallable)
+	void CallOnGameStartStop();
 };
