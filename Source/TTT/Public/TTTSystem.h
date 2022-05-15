@@ -67,7 +67,7 @@ public:
 	int32 PieceCount = 0;
 	
 	int32 GridDimensions = 3;
-	float GridGap = 240;
+	float GridGap = 240.f;
 	
 public:
 	void UpdateGrid();

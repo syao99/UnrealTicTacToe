@@ -38,8 +38,8 @@ public:
 
 	APlayerController* PlayerController;
 
-	bool IsGameActive = false;
-	bool IsCurrentlyOPlayer = false;
+	bool bIsGameActive = false;
+	bool bIsCurrentlyOPlayer = false;
 
 public:
 	UFUNCTION(BlueprintCallable)

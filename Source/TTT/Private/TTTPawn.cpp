@@ -2,6 +2,7 @@
 
 
 #include "TTTPawn.h"
+#include "TTTSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -53,35 +54,74 @@ void ATTTPawn::InitUI()
 	//HUD_UI->NewOnGridAdjust.BindRaw();
 	// todo: figure out dumbfuck docs & delegates
 }
-/*
+
 void ATTTPawn::InitSystem()
 {
-
+	TArray<AActor*> OutActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATTTSystem::StaticClass(), OutActors);
+	TTTSystem = Cast<ATTTSystem>(OutActors[0]);
 }
+
 void ATTTPawn::UpdateCamera(int32 GridDimensions, float DistanceMultiplier)
 {
-
+	float NewZ = GridDimensions * DistanceMultiplier;
+	Camera->SetRelativeLocation(FVector(0.f, 0.f, NewZ));
 }
 
 void ATTTPawn::GameStartStop()
 {
-
+	bIsGameActive = !bIsGameActive;
+	HUD_UI->NewSwitchIsPlaying(bIsGameActive, bIsCurrentlyOPlayer);
+	TTTSystem->StartStopGame(bIsGameActive);
+	bIsCurrentlyOPlayer = false;
 }
 void ATTTPawn::InputActionSelect()
 {
-
+	if (bIsGameActive)
+	{
+		int32 TraceIndex = -1;
+		if (ClickTraceForTile(TraceIndex))
+		{
+			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
+			{
+				auto State = TTTSystem->CheckWinner(TraceIndex);
+				/*switch (State)
+				{
+					case ETileState::Neutral:
+					break;
+					case ETileState::X:
+					break;
+					case ETileState::O:
+					break;
+				}*/
+			}
+		}
+	}
 }
 void ATTTPawn::GridAdjust(bool IsIncrementing)
 {
 
 }
-*/
+
 bool ATTTPawn::ClickTraceForTile(int32& OutIndex)
 {
-	FVector OutWorldLocation;
-	FVector OutWorldDirection;
-	if (PlayerController->DeprojectMousePositionToWorld(OutWorldLocation, OutWorldDirection)) { 
-		
+	FVector WorldLocation;
+	FVector WorldDirection;
+	if (PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection)) {
+		FVector Start = WorldLocation;
+		FVector End = WorldLocation + (WorldDirection * 5000);
+		FHitResult HitData;
+		if (GetWorld()->LineTraceSingleByProfile(
+			HitData,
+			Start,
+			End,
+			FName(TEXT("TTT")),
+			FCollisionQueryParams(false)
+		))
+		{
+			OutIndex = HitData.Item;
+			return true;
+		}
 	}
 	return false;
 }
