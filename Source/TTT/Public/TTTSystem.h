@@ -58,7 +58,7 @@ public:
 
 public:
 	UInstancedStaticMeshComponent* Grid;
-	AStaticMeshActor* Meshes;
+	TArray<AStaticMeshActor*> Meshes;
 	UStaticMesh* MeshO;
 	UStaticMesh* MeshX;
 

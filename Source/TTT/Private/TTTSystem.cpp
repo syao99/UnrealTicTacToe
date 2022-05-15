@@ -2,6 +2,7 @@
 
 
 #include "TTTSystem.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 ATTTSystem::ATTTSystem()
@@ -29,14 +30,52 @@ void ATTTSystem::Tick(float DeltaTime)
 
 void ATTTSystem::UpdateGrid()
 {
-
+	CurrentInstances.Reset();
+	Meshes.Reset();
+	TileState.Reset();
+	Grid->ClearInstances();
+	float GridOffsetVal = GetGridOffsetCenteringVal(GridDimensions, GridGap);
+	int32 LastIndex = GetMainArraysLastIndex(GridDimensions);
+	for (int i = 0; i < LastIndex; i++) {
+		TArray<int32> GridCoords = GetGridCoordsFromIndex(i, GridDimensions);
+		float LocationX = (GridCoords[0] * GridGap) - GridOffsetVal;
+		float LocationY = (GridCoords[1] * GridGap) - GridOffsetVal;
+		FTransform NewInst = FTransform(
+			FRotator(0.f, 0.f, 0.f),
+			FVector(LocationX, LocationY, 0.f),
+			FVector(1.f, 1.f, 1.f)
+		);
+		CurrentInstances.Add(NewInst);
+	}
+	Grid->AddInstances(CurrentInstances,false);
+	Meshes.SetNum(LastIndex);
+	TileState.SetNum(LastIndex);
 }
 int32 ATTTSystem::AdjustGrid(bool bIsIncrementing)
 {
-	return 0;
+	int32 Adder = 0;
+	bIsIncrementing ? Adder = 1 : Adder = -1;
+	GridDimensions += UKismetMathLibrary::Clamp(Adder, 3, 10);
+	UpdateGrid();
+	return GridDimensions;
 }
-bool ATTTSystem::AddPiece(bool IsOPlayer, int32 LocationIndex)
+bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 {
+	bool bIsTileStateNeutral = (TileState[LocationIndex] == ETileState::Neutral);
+	if (bIsTileStateNeutral) {
+		TileState[LocationIndex] = GetTileStateFromIsO(bIsOPlayer);
+	}
+	else { return false; }
+	AStaticMeshActor* CurrentMesh = GetWorld()->SpawnActor<AStaticMeshActor>(
+		AStaticMeshActor::StaticClass(),
+		CurrentInstances[LocationIndex]
+	);
+	CurrentMesh->SetMobility(EComponentMobility::Movable);
+	UStaticMesh* PlayerMesh;
+	bIsOPlayer ? PlayerMesh = MeshO : PlayerMesh = MeshX;
+	CurrentMesh->GetStaticMeshComponent()->SetStaticMesh(PlayerMesh);
+	Meshes[LocationIndex] = CurrentMesh;
+	PieceCount++;
 	return false;
 }
 void ATTTSystem::ResetPieces()
