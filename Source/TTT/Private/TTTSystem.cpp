@@ -27,87 +27,87 @@ void ATTTSystem::Tick(float DeltaTime)
 
 }
 
-void UpdateGrid()
+void ATTTSystem::UpdateGrid()
 {
 
 }
-int32 AdjustGrid(bool bIsIncrementing)
+int32 ATTTSystem::AdjustGrid(bool bIsIncrementing)
 {
 	return 0;
 }
-bool AddPiece(bool IsOPlayer, int32 LocationIndex)
+bool ATTTSystem::AddPiece(bool IsOPlayer, int32 LocationIndex)
 {
 	return false;
 }
-void ResetPieces()
+void ATTTSystem::ResetPieces()
 {
 
 }
-void StartStopGame(bool IsStarting)
+void ATTTSystem::StartStopGame(bool IsStarting)
 {
-
+	return;
 }
 
-ETileState CheckWinner(int32 StartFromIndex)
+ETileState ATTTSystem::CheckWinner(int32 StartFromIndex)
 {
 	return ETileState::Neutral;
 }
 
-bool GetAdjacentTile(int32 Index, int32 GridDimensions, ETileDirection Direction, int32* OutIndex)
+bool ATTTSystem::GetAdjacentTile(int32 Index, int32 GridDim, ETileDirection Direction, int32* OutIndex)
 {
 	return false;
 }
 
-TArray<int32> GetCoordAdderFromDirection(ETileDirection Direction)
+TArray<int32> ATTTSystem::GetCoordAdderFromDirection(ETileDirection Direction)
 {
 	TArray<int32> Arr;
 	return Arr;
 }
 
-int32 GetMainArraysLastIndex(int32 GridDimensions)
+int32 ATTTSystem::GetMainArraysLastIndex(int32 GridDim)
 {
 	return 0;
 }
 
-int32 GetMainArraysLength(int32 GridDimensions)
+int32 ATTTSystem::GetMainArraysLength(int32 GridDim)
 {
 	return 0;
 }
 
-bool ScanRowOrColumn(ETileState CompareTileState, int32 GridDimensions, bool bIsRows)
+bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, int32 GridDim, bool bIsRows)
 {
 	return false;
 }
 
-bool ScanDiagonal(ETileState CompareTileState, int32 GridDimensions, bool bIsReversed)
+bool ATTTSystem::ScanDiagonal(ETileState CompareTileState, int32 GridDim, bool bIsReversed)
 {
 	return false;
 }
 
-bool IsGameTied()
+bool ATTTSystem::IsGameTied()
 {
 	return false;
 }
 
 
-TArray<int32> GetGridCoordsFromIndex(int32 Index, int32 GridDimensions)
+TArray<int32> ATTTSystem::GetGridCoordsFromIndex(int32 Index, int32 GridDim)
 {
 	TArray<int32> Arr;
 	return Arr;
 }
 
-int32 GetIndexFromGridCoords(int32 X, int32 Y, int32 GridDimensions)
+int32 ATTTSystem::GetIndexFromGridCoords(int32 X, int32 Y, int32 GridDim)
 {
 	return 0;
 }
 
 
-float GetGridOffsetCenteringVal(int32 GridDimensions, float GridGap)
+float ATTTSystem::GetGridOffsetCenteringVal(int32 GridDim, float GGap)
 {
 	return 0.f;
 }
 
-ETileState GetTileStateFromIsO(bool IsO)
+ETileState ATTTSystem::GetTileStateFromIsO(bool IsO)
 {
 	return ETileState::Neutral;
 }

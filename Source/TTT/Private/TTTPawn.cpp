@@ -75,6 +75,7 @@ void ATTTPawn::GameStartStop()
 	TTTSystem->StartStopGame(bIsGameActive);
 	bIsCurrentlyOPlayer = false;
 }
+/*
 void ATTTPawn::InputActionSelect()
 {
 	if (bIsGameActive)
@@ -84,7 +85,7 @@ void ATTTPawn::InputActionSelect()
 		{
 			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
 			{
-				auto State = TTTSystem->CheckWinner(TraceIndex);
+				//auto State = TTTSystem->CheckWinner(TraceIndex);
 				/*switch (State)
 				{
 					case ETileState::Neutral:
@@ -93,11 +94,12 @@ void ATTTPawn::InputActionSelect()
 					break;
 					case ETileState::O:
 					break;
-				}*/
+				}
 			}
 		}
 	}
 }
+*/
 void ATTTPawn::GridAdjust(bool IsIncrementing)
 {
 
