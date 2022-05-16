@@ -20,13 +20,13 @@ class UTTT_HUD_UI : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void NewSwitchIsPlaying(bool bIsPlaying, bool bIsOPlayer);
+	void SwitchIsPlaying(bool bIsPlaying, bool bIsOPlayer);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void EndGame(ETileState State);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void NewUpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
+	void UpdateStatusTextCurrentPlayer(bool bIsOPlayer, bool bIsGameActive);
 
 public:
 	UPROPERTY(BlueprintAssignable)

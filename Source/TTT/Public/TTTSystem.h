@@ -47,7 +47,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	UPROPERTY(EditAnywhere)
 	UInstancedStaticMeshComponent* Grid;
+
 	TArray<AStaticMeshActor*> Meshes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

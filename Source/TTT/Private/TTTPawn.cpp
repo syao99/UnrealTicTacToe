@@ -6,6 +6,7 @@
 #include "TTT_HUD_UI.h"
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "DrawDebugHelpers.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -25,6 +26,15 @@ void ATTTPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (InputComponent)
+	{
+		InputComponent->BindAction(
+			"Select",
+			IE_Pressed,
+			this,
+			&ATTTPawn::InputActionSelect
+		);
+	}
 	InitUI();
 	InitSystem();
 	UpdateCamera(3, GridDistanceMultiplier);
@@ -40,15 +50,7 @@ void ATTTPawn::Tick(float DeltaTime)
 void ATTTPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	if (InputComponent)
-	{
-		InputComponent->BindAction(
-			"Select",
-			IE_Pressed,
-			this,
-			&ATTTPawn::InputActionSelect
-		);
-	}
+	
 }
 
 void ATTTPawn::InitUI()
@@ -59,7 +61,6 @@ void ATTTPawn::InitUI()
 		UE_LOG(LogTemp, Error, TEXT("Error: TTTPawn must be instantiated as BP, with InitUI_BP() implemented and returning a valid UI pointer."));
 		return;
 	}
-	//HUD_UI = CreateWidget<UTTT_HUD_UI>(GetWorld(), UTTT_HUD_UI::StaticClass());
 	if (HUD_UI != nullptr) { HUD_UI->AddToViewport(); }
 	PlayerController->SetShowMouseCursor(true);
 	UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, HUD_UI, EMouseLockMode::DoNotLock, false);
@@ -85,7 +86,7 @@ void ATTTPawn::GameStartStop()
 {
 	UE_LOG(LogTemp, Display, TEXT("GameStartStop"));
 	bIsGameActive = !bIsGameActive;
-	HUD_UI->NewSwitchIsPlaying(bIsGameActive, bIsCurrentlyOPlayer);
+	HUD_UI->SwitchIsPlaying(bIsGameActive, bIsCurrentlyOPlayer);
 	TTTSystem->StartStopGame(bIsGameActive);
 	bIsCurrentlyOPlayer = false;
 }
@@ -95,29 +96,31 @@ void ATTTPawn::InputActionSelect()
 	UE_LOG(LogTemp, Display, TEXT("Click"));
 	if (bIsGameActive)
 	{
+		UE_LOG(LogTemp, Display, TEXT("IsGameActive True"));
 		int32 TraceIndex = -1;
 		if (ClickTraceForTile(TraceIndex))
 		{
+			UE_LOG(LogTemp, Display, TEXT("ClickTraceForTile: %d"),TraceIndex);
 			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
 			{
-				ETileState State = TTTSystem->CheckWinner(TraceIndex);
-				switch (State)
+				ETileState TState = TTTSystem->CheckWinner(TraceIndex);
+				switch (TState)
 				{
 					case ETileState::Neutral:
 						if (TTTSystem->IsGameTied()) {
-							EndGame(State);
+							EndGame(TState);
 						}
 						else
 						{
 							bIsCurrentlyOPlayer = !bIsCurrentlyOPlayer;
-							HUD_UI->NewUpdateStatusTextCurrentPlayer(bIsCurrentlyOPlayer, true);
+							HUD_UI->UpdateStatusTextCurrentPlayer(bIsCurrentlyOPlayer, true);
 						}
 					break;
 					case ETileState::X:
-						EndGame(State);
+						EndGame(TState);
 					break;
 					case ETileState::O:
-						EndGame(State);
+						EndGame(TState);
 					break;
 				}
 			}
@@ -146,6 +149,16 @@ bool ATTTPawn::ClickTraceForTile(int32& OutIndex)
 		FVector Start = WorldLocation;
 		FVector End = WorldLocation + (WorldDirection * 5000);
 		FHitResult HitData;
+		/*DrawDebugLine(
+			GetWorld(),
+			Start,
+			End,
+			FColor(255,0,0,0),
+			true,
+			5.f,
+			0u,
+			3.f
+		);*/
 		if (GetWorld()->LineTraceSingleByProfile(
 			HitData,
 			Start,
