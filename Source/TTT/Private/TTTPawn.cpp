@@ -144,16 +144,6 @@ bool ATTTPawn::ClickTraceForTile(int32& OutIndex)
 		FVector Start = WorldLocation;
 		FVector End = WorldLocation + (WorldDirection * 5000);
 		FHitResult HitData;
-		/*DrawDebugLine(
-			GetWorld(),
-			Start,
-			End,
-			FColor(255,0,0,0),
-			true,
-			5.f,
-			0u,
-			3.f
-		);*/
 		if (GetWorld()->LineTraceSingleByProfile(
 			HitData,
 			Start,
