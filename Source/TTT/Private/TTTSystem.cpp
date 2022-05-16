@@ -64,13 +64,11 @@ int32 ATTTSystem::AdjustGrid(bool bIsIncrementing)
 }
 bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 {
-	UE_LOG(LogTemp, Display, TEXT("isOplayer: %s"), bIsOPlayer ? TEXT("True") : TEXT("False"));
 	bool bIsTileStateNeutral = (TileState[LocationIndex] == ETileState::Neutral);
 	if (bIsTileStateNeutral) {
 		if (TileState.IsValidIndex(LocationIndex))
 		{
 			TileState[LocationIndex] = GetTileStateFromIsO(bIsOPlayer);
-			//UE_LOG(LogTemp, Display, TEXT("fn val: %s, TSarray val: %s"),*UEnum::GetValueAsString(GetTileStateFromIsO(bIsOPlayer)), *UEnum::GetValueAsString(TileState[LocationIndex]));
 		}
 		else
 		{
@@ -125,7 +123,6 @@ ETileState ATTTSystem::CheckWinner(int32 StartFromIndex)
 {
 	if (PieceCount >= GridDimensions) {
 		ETileState CompareTileState = TileState[StartFromIndex];
-		UE_LOG(LogTemp, Display, TEXT("Index: %d, TState: %s"), StartFromIndex, *UEnum::GetValueAsString(CompareTileState));
 		bool bIsWinner = false;
 		bIsWinner = (
 			ScanDiagonal(CompareTileState, GridDimensions, false) ||

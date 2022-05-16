@@ -92,7 +92,6 @@ void ATTTPawn::GameStartStop()
 
 void ATTTPawn::InputActionSelect()
 {
-	UE_LOG(LogTemp, Display, TEXT("Click"));
 	if (bIsGameActive)
 	{
 		int32 TraceIndex = -1;
@@ -101,7 +100,6 @@ void ATTTPawn::InputActionSelect()
 			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
 			{
 				ETileState TState = TTTSystem->CheckWinner(TraceIndex);
-				UE_LOG(LogTemp, Display, TEXT("TState: %s"), *UEnum::GetValueAsString(TState));
 				switch (TState)
 				{
 					case ETileState::Neutral:
