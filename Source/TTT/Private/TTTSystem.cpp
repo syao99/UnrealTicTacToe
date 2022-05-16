@@ -64,16 +64,23 @@ int32 ATTTSystem::AdjustGrid(bool bIsIncrementing)
 }
 bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 {
+	UE_LOG(LogTemp, Display, TEXT("isOplayer: %s"), bIsOPlayer ? TEXT("True") : TEXT("False"));
 	bool bIsTileStateNeutral = (TileState[LocationIndex] == ETileState::Neutral);
 	if (bIsTileStateNeutral) {
-		TileState[LocationIndex] = GetTileStateFromIsO(bIsOPlayer);
+		if (TileState.IsValidIndex(LocationIndex))
+		{
+			TileState[LocationIndex] = GetTileStateFromIsO(bIsOPlayer);
+			//UE_LOG(LogTemp, Display, TEXT("fn val: %s, TSarray val: %s"),*UEnum::GetValueAsString(GetTileStateFromIsO(bIsOPlayer)), *UEnum::GetValueAsString(TileState[LocationIndex]));
+		}
+		else
+		{
+			UE_LOG(LogTemp,Error,TEXT("Error: TileState Location Index is not valid."));
+		}
 	}
-	else { return false; }
-	AStaticMeshActor* CurrentMesh = GetWorld()->SpawnActor<AStaticMeshActor>(
-		AStaticMeshActor::StaticClass(),
-		CurrentInstances[LocationIndex]
-	);
-	CurrentMesh->SetMobility(EComponentMobility::Movable);
+	else
+	{
+		return false;
+	}
 	UStaticMesh* PlayerMesh;
 	if (bIsOPlayer)
 	{
@@ -83,10 +90,15 @@ bool ATTTSystem::AddPiece(bool bIsOPlayer, int32 LocationIndex)
 	{
 		PlayerMesh = MeshX;
 	}
+	AStaticMeshActor* CurrentMesh = GetWorld()->SpawnActor<AStaticMeshActor>(
+		AStaticMeshActor::StaticClass(),
+		CurrentInstances[LocationIndex]
+	);
+	CurrentMesh->SetMobility(EComponentMobility::Movable);
 	CurrentMesh->GetStaticMeshComponent()->SetStaticMesh(PlayerMesh);
 	Meshes[LocationIndex] = CurrentMesh;
 	PieceCount++;
-	return false;
+	return true;
 }
 void ATTTSystem::ResetPieces()
 {
@@ -113,6 +125,7 @@ ETileState ATTTSystem::CheckWinner(int32 StartFromIndex)
 {
 	if (PieceCount >= GridDimensions) {
 		ETileState CompareTileState = TileState[StartFromIndex];
+		UE_LOG(LogTemp, Display, TEXT("Index: %d, TState: %s"), StartFromIndex, *UEnum::GetValueAsString(CompareTileState));
 		bool bIsWinner = false;
 		bIsWinner = (
 			ScanDiagonal(CompareTileState, GridDimensions, false) ||
@@ -198,12 +211,14 @@ bool ATTTSystem::ScanRowOrColumn(ETileState CompareTileState, const int32 GridDi
 {
 	int32 LastIndex = GridDim - 1;
 	int32 CurrentCount = 0;
-	for (int32 i = 0; i < LastIndex; i++)
+
+	for (int32 i = 0; i < GridDim; i++)
 	{
 		CurrentCount = 0;
-		for (int32 j = 0; j < LastIndex; j++)
+		for (int32 j = 0; j < GridDim; j++)
 		{
-			int32 X, Y;
+			int32 X;
+			int32 Y;
 			if (bIsRows)
 			{
 				X = i;
@@ -234,9 +249,10 @@ bool ATTTSystem::ScanDiagonal(ETileState CompareTileState, const int32 GridDim, 
 {
 	int32 LastIndex = GridDim - 1;
 	int32 CurrentCount = 0;
-	for (int32 i = 0; i < LastIndex; i++)
+	for (int32 i = 0; i < GridDim; i++)
 	{
-		int32 X, Y;
+		int32 X;
+		int32 Y;
 		X = i;
 		if (bIsReversed)
 		{

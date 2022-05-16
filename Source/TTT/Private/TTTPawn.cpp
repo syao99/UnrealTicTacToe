@@ -95,14 +95,13 @@ void ATTTPawn::InputActionSelect()
 	UE_LOG(LogTemp, Display, TEXT("Click"));
 	if (bIsGameActive)
 	{
-		UE_LOG(LogTemp, Display, TEXT("IsGameActive True"));
 		int32 TraceIndex = -1;
 		if (ClickTraceForTile(TraceIndex))
 		{
-			UE_LOG(LogTemp, Display, TEXT("ClickTraceForTile: %d"),TraceIndex);
 			if (TTTSystem->AddPiece(bIsCurrentlyOPlayer, TraceIndex))
 			{
 				ETileState TState = TTTSystem->CheckWinner(TraceIndex);
+				UE_LOG(LogTemp, Display, TEXT("TState: %s"), *UEnum::GetValueAsString(TState));
 				switch (TState)
 				{
 					case ETileState::Neutral:
@@ -135,7 +134,6 @@ void ATTTPawn::EndGame(ETileState State)
 
 void ATTTPawn::GridAdjust(bool bIsIncrementing)
 {
-	//UE_LOG(LogTemp, Display, TEXT("Pawn GridAdjust %s"), bIsIncrementing ? TEXT("True") : TEXT("False"));
 	int32 GridDim = TTTSystem->AdjustGrid(bIsIncrementing);
 	UpdateCamera(GridDim, GridDistanceMultiplier);
 }
