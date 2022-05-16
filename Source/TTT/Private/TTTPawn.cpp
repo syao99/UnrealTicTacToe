@@ -84,7 +84,6 @@ void ATTTPawn::UpdateCamera(int32 GridDimensions, float DistanceMultiplier)
 
 void ATTTPawn::GameStartStop()
 {
-	UE_LOG(LogTemp, Display, TEXT("GameStartStop"));
 	bIsGameActive = !bIsGameActive;
 	HUD_UI->SwitchIsPlaying(bIsGameActive, bIsCurrentlyOPlayer);
 	TTTSystem->StartStopGame(bIsGameActive);
